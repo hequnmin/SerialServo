@@ -1,6 +1,6 @@
 #include <iostream>
 #include <Arduino.h>
-#include "SerialServo.h"
+#include "../SerialServo.h"
 
 using namespace std;
 
