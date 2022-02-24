@@ -1,54 +1,52 @@
+#ifndef SERIALSERVO_h
+#define SERIALSERVO_h
 
-
-#ifndef SerialServo_h
-#define SerialServo_h
-
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/uart.h"
+#include "driver/gpio.h"
+#include "cJSON.h"
 #include <iostream>
 using namespace std;
+#include <cstring>
 
-#include <Arduino.h>
-#include <ArduinoJson.h>
-
-#define RXD2 5
-#define TXD2 18
+#define EX_UART_NUM UART_NUM_1
+#define BUFFER_SIZE (1024)
 
 class SerialServo;
 typedef void (*onRequestPointer) ();
+typedef void (*afterResponsePointer) ();
 
 class SerialServo
 {
-    
+private:
+    onRequestPointer requestCallback;
+    afterResponsePointer responseCallback;
+
+    SerialServo *self;
+
+    void uart_init(int baud, int8_t rxPin, int8_t txPin);
+
 public:
-    SerialServo();
+    SerialServo(/* args */);
     ~SerialServo();
 
-public:
-    String requestString = String();
-    String responseString = String();
-
-    StaticJsonDocument<1024>  requestData;
-    StaticJsonDocument<1024>  responseData;
+    uint8_t *buffer;
 
     // 串口设置
-    void begin(unsigned long baud = 115200, uint32_t config = SERIAL_8N1, int8_t rxPin = 5, int8_t txPin = 18);
-
-    // 串口监听
-    void listen();
+    void begin(int baud = 115200, int8_t rxPin = 5, int8_t txPin = 18);
 
     // 串口接收数据后回调函数
     void onRequest(onRequestPointer pointer);
 
-    // 通信内容解析：JSON反序列化（暂时不支持校验参数有效性），true: 成功；false：失败，parseError：失败原因。
-    bool parse();
-    const char* parseError;
+    // 串口发送数据后回调函数
+    void afterResponse(afterResponsePointer pointer);
 
-    void response();
+    void listen();
 
-private:
-    onRequestPointer requestCallback;
-    SerialServo *self;
+    void response(char *json);
+
 };
-
-
 
 #endif

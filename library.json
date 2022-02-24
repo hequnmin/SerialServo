@@ -1,8 +1,8 @@
 {
     "name": "SerialServo",
+    "version": "0.0.0.20",
     "description":"ESP32 Serial Servo.",
     "keywords":"esp32,Serial,Servo",
-    "version": "0.0.0.15",
     "repository":
     {
         "type": "git",
@@ -16,6 +16,6 @@
             "maintainer": true
         }
     ],
-    "frameworks": ["arduino"],
-    "platforms": ["espressif32", "espressif8266"]
+    "frameworks": "arduino",
+    "platforms": ["espressif32"]
 }
