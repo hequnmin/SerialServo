@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-#include "SerialServo.h"
+#include "SerialServo.hpp"
 
 SerialServo::SerialServo() {
 }

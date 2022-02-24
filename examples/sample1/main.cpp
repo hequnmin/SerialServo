@@ -14,13 +14,13 @@ void onRequest()
     bool ok = srv.parse();
 
     if (ok) {
-        srv.responseData.clear();
-        srv.responseData["err"] = String();
-        srv.responseData["cmd"] = srv.requestData["cmd"].as<String>();
+        // srv.responseData.clear();
+        // srv.responseData["err"] = String();
+        // srv.responseData["cmd"] = srv.requestData["cmd"].as<String>();
 
     } else {
-        srv.responseData.clear();
-        srv.responseData["err"] = srv.parseError;
+        // srv.responseData.clear();
+        // srv.responseData["err"] = srv.parseError;
     } 
 
     srv.response();
