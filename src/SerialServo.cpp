@@ -40,7 +40,7 @@ void SerialServo::uart_init(int baud, int8_t rxPin, int8_t txPin) {
 		.stop_bits = UART_STOP_BITS_1,					//停止位
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,			//流控位
 		.rx_flow_ctrl_thresh = 10, 					    //控制模式
-        .source_clk = UART_SCLK_APB,
+//        .source_clk = UART_SCLK_APB,
 	};
 
 	ESP_ERROR_CHECK(uart_param_config(EX_UART_NUM, &uart_config));
