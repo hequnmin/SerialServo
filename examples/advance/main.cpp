@@ -14,6 +14,8 @@
 using namespace std;
 #include "SerialServo.hpp"
 #include "Command.hpp"
+using namespace ATE;
+
 
 SerialServo srv;
 
@@ -26,6 +28,7 @@ void restart() {
 
 void onRequest()
 {
+    //srv.response("Hello World");
     printf("Has a request, and callback success!\n");
     Command cmd;
     REQUEST_BODY_BASIC reqBasic;
@@ -85,7 +88,7 @@ void onRequest()
         RESPONSE_BODY_BASIC resError;
         resError.id = reqBasic.id;
         resError.err = reqBasic.err;
-        srv.response(cmd.printBasic(&resError));        
+        srv.response(cmd.printBasic(&resError));
     }
 }
 
