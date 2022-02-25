@@ -14,8 +14,6 @@
 
 namespace ATE
 {
-    enum SRV_UART_NUM { SRV_UART_NUM_0, SRV_UART_NUM_1, SRV_UART_NUM_2 };
-
     class SerialServo;
     typedef void (*onRequestPointer) ();
     typedef void (*afterResponsePointer) ();
@@ -36,7 +34,7 @@ namespace ATE
 
         uint8_t *buffer;
 
-        SRV_UART_NUM uartNum = SRV_UART_NUM_1;
+        uart_port_t uartNum = UART_NUM_1;
 
         // 串口设置
         void begin(int baud = 115200, int8_t rxPin = 5, int8_t txPin = 18);
