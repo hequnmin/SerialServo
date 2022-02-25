@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "driver/uart.h"
-#include "driver/gpio.h"
 
 #include "SerialServo.hpp"
 using namespace ATE;
@@ -25,7 +23,7 @@ extern "C" void app_main() {
     fflush(stdout);
 
     // SerialServo初始化设置
-    srv.uartNum = SRV_UART_NUM_0;   //指定UartNum，默认SRV_UART_NUM_1
+    srv.uartNum = UART_NUM_0;   //指定UartNum，默认SRV_UART_NUM_1
     srv.begin(115200, 5, 18);       //指定 RX = 5; TX = 18;
     srv.onRequest(onRequest);       //设置接收到请求后回调函数
 
