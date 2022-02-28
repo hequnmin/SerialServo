@@ -66,3 +66,73 @@ void loop() {
 }
 
 ```
+## API
+
+ ### Command Struct & JSON
+ #### 请求关键字
+  - REQUEST_KEY_BASIC       // 请求基类
+  - REQUEST_KEY_INFO        // <系统信息>请求
+  - REQUEST_KEY_RESET       // <复位/清零>请求
+
+
+ #### 请求/应答格式
+
+ **REQUEST_BODY_BASIC 请求结构体格式**
+ - int id           // 请求标识号
+ - string cmd       // 请求关键字
+ - [string err]     // 解析错误信息
+ - JSON: ***{"id":123, "cmd":"xxxx"}***
+
+ **RESPONSE_BODY_BASIC 应答基本格式**
+ - int id           // 请求标识号
+ - [string err]     // 错误信息，NULL或空：无错误/执行成功
+ - Success JSON: ***{"id":123,...}*** - 执行成功；
+ - Failed JSON: ***{"err":"error message.","id":123,...}*** - 执行错误；
+
+ #### Struct & JSON 实例
+
+ **REQUEST_BODY_BASIC 请求基本结构体**
+ - int id           // 请求标识号
+ - string cmd       // 请求关键字
+ - [string err]     // 请求解析错误信息
+ - REQUEST_KEY key  // 解析后关键字枚举，REQUEST_KEY_INFO,REQUEST_KEY_RESET,...
+ - JSON: {"id":123, "cmd":"xxxx"}
+
+ **RESPONSE_BODY_BASIC 应答基本格式**
+ - int id           // 请求标识号
+ - [string err]     // 错误信息
+ - Success JSON: {"id":123,...} - 执行成功；
+ - Failed JSON: {"err":"error message.", "id":123,...} - 执行错误；
+
+
+ **1. INFO 系统信息**
+
+ **REQUEST_BODY_INFO <系统信息>请求结构体**
+ - int id                               // 请求标识号
+ - string cmd = "info"                  // 请求关键字
+ - REQUEST_KEY key = REQUEST_KEY_INFO    
+ - JSON: {"id":123, "cmd":"info"}
+
+ **RESPONSE_BODY_INFO <系统信息>应答结构体**
+ - int id                   // 请求标识号
+ - string chi               // 芯片信息
+ - string mac               // 物理地址
+ - string ver               // 嵌入式版本
+ - int chn                  // 通道号
+ - int cnn                  // 连接号
+ - JSON: { "id":123, "chi":"esp32", "mac":"AA01", "ver": "1.2.3.4", "chn": 12, "cnn": 12  }
+
+ **2. RESET 复位/清零**
+
+ **REQUEST_BODY_RESET <复位/清零>请求结构体**
+ - int id                   // 请求标识号
+ - string cmd = "reset"     // 请求关键字
+ - REQUEST_KEY key = REQUEST_KEY_RESET
+ - JSON: {"id":123, "cmd":"reset"}
+
+ **RESPONSE_BODY_RESET <复位/清零>应答结构体**
+ - int id                   // 请求标识号
+ - JSON: { "id":123 }
+
+  
+
