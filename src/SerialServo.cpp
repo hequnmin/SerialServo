@@ -2,8 +2,16 @@
 
 namespace ATE
 {
-    SerialServo::SerialServo(/* args */)
+    // SerialServo::SerialServo(/* args */)
+    // {
+    //     // 缓存分配内存
+    //     buffer = (uint8_t *)malloc(BUFFER_SIZE);
+    // }
+
+    SerialServo::SerialServo(uart_port_t uartnum)
     {
+        // 设置UART
+        uartNum = uartnum;
         // 缓存分配内存
         buffer = (uint8_t *)malloc(BUFFER_SIZE);
     }
@@ -26,7 +34,7 @@ namespace ATE
         self = this;
     }
 
-    void SerialServo::begin (int baud, int8_t rxPin, int8_t txPin)
+    void SerialServo::begin(int baud, int8_t rxPin, int8_t txPin)
     {
         uartInit(baud, rxPin, txPin);
 
@@ -78,7 +86,7 @@ namespace ATE
         if (responseCallback != NULL) {
             vTaskDelay(10 / portTICK_RATE_MS);
             responseCallback();
-            responseCallback = NULL;
+            //responseCallback = NULL;
         }
     }
 
