@@ -62,7 +62,8 @@ namespace ATE
         
         // Install UART driver using an event queue here
         //ESP_ERROR_CHECK(uart_driver_install(EX_UART_NUM, BUFFER_SIZE * 2, 0, 0, NULL, 0));
-        ESP_ERROR_CHECK(uart_driver_install(uartNum, BUFFER_SIZE * 2, 0, 0, NULL, 0));
+        //ESP_ERROR_CHECK(uart_driver_install(uartNum, BUFFER_SIZE * 2, 0, 0, NULL, 0));
+        ESP_ERROR_CHECK(uart_driver_install(uartNum, BUFFER_SIZE * 2, BUFFER_SIZE * 2, 0, NULL, 0));
         
     }
 
