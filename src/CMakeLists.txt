@@ -11,10 +11,10 @@
 # FILE(GLOB_RECURSE app_sources   ${CMAKE_SOURCE_DIR}/src/*.*
 #                                 ${CMAKE_SOURCE_DIR}/examples/advance/*.*)
 
-# FILE(GLOB_RECURSE app_sources   ${CMAKE_SOURCE_DIR}/src/*.*
-#                                 ${CMAKE_SOURCE_DIR}/examples/parse/*.*)
-
 FILE(GLOB_RECURSE app_sources   ${CMAKE_SOURCE_DIR}/src/*.*
-                                ${CMAKE_SOURCE_DIR}/examples/multiuart/*.*)
+                                ${CMAKE_SOURCE_DIR}/examples/parse/*.*)
+
+# FILE(GLOB_RECURSE app_sources   ${CMAKE_SOURCE_DIR}/src/*.*
+#                                 ${CMAKE_SOURCE_DIR}/examples/multiuart/*.*)
 
 idf_component_register(SRCS ${app_sources})

@@ -12,9 +12,10 @@ namespace ATE
 
     bool Command::parseBasic(const char *json, REQUEST_BODY_BASIC *basic) {
 
-        cJSON *doc, *id, *cmd;
-        doc = cJSON_Parse(json);
-        if (doc == NULL) {
+        cJSON *cjsonRoot, *cjsonId, *cjsonCmd;
+        
+        cjsonRoot = cJSON_Parse(json);
+        if (cjsonRoot == NULL) {
             const char *jsonError = cJSON_GetErrorPtr();
             if (jsonError && *jsonError != '\0' ) {
                 basic->err = jsonError;
@@ -24,20 +25,20 @@ namespace ATE
             return false;
 
         } else {
-            id = cJSON_GetObjectItem(doc, "id");
-            if (id == NULL) {
+            cjsonId = cJSON_GetObjectItem(cjsonRoot, "id");
+            if (cjsonId == NULL) {
                 basic->err = "id error.";
                 return false;
             }
 
-            cmd = cJSON_GetObjectItem(doc, "cmd");
-            if (cmd == NULL) {
+            cjsonCmd = cJSON_GetObjectItem(cjsonRoot, "cmd");
+            if (cjsonCmd == NULL) {
                 basic->err = "cmd error.";
                 return false;
             }
 
-            basic->id = id->valueint;
-            basic->cmd = cmd->valuestring;
+            basic->id = cjsonId->valueint;
+            basic->cmd = cjsonCmd->valuestring;
 
             if (strcmp(basic->cmd, "info") == 0) {
                 basic->key = REQUEST_KEY::REQUEST_KEY_INFO;
@@ -103,6 +104,35 @@ namespace ATE
         return true;
     }
 
+    bool Command::parseCustom(const char* json, REQUEST_BODY_CUSTOM* custom) {
+        cJSON *cjsonRoot, *cjsonId, *cjsonCmd, *cjsonData;
+        cjsonRoot = cJSON_Parse(json);
+        if (cjsonRoot == NULL) {
+            return false;
+        } else {
+
+            cjsonId = cJSON_GetObjectItem(cjsonRoot, "id");
+            cjsonCmd = cJSON_GetObjectItem(cjsonRoot, "cmd");
+            cjsonData = cJSON_GetObjectItem(cjsonRoot, "data");
+
+            custom->id = cjsonId->valueint;
+            custom->cmd = cjsonCmd->valuestring;
+            unsigned char* data = {};
+            Util::HexToByte(cjsonData->valuestring, data);
+            custom->data = data;
+
+            if (strcmp(custom->cmd, "custom") == 0) {
+                custom->key = REQUEST_KEY::REQUEST_KEY_CUSTOM;
+            } else {
+                custom->key = REQUEST_KEY::REQUEST_KEY_ERROR;
+                custom->err = (char*)"cmd error.";
+                return false;
+            }
+
+        }
+        return true;
+    }
+
     char* Command::printBasic(RESPONSE_BODY_BASIC* resBasic) {
         cJSON *doc = cJSON_CreateObject();
         
@@ -137,5 +167,6 @@ namespace ATE
 
         return cJSON_Print(doc);
     }
+
 
 }
