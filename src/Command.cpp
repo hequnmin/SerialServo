@@ -44,6 +44,8 @@ namespace ATE
                 basic->key = REQUEST_KEY::REQUEST_KEY_INFO;
             } else if (strcmp(basic->cmd, "reset") == 0) {
                 basic->key = REQUEST_KEY::REQUEST_KEY_RESET;
+            } else if (strcmp(basic->cmd, "custom") == 0) {
+                basic->key = REQUEST_KEY::REQUEST_KEY_CUSTOM;
             } else {
                 basic->key = REQUEST_KEY::REQUEST_KEY_ERROR;
                 basic->err = "cmd invalid.";
@@ -117,9 +119,14 @@ namespace ATE
 
             custom->id = cjsonId->valueint;
             custom->cmd = cjsonCmd->valuestring;
-            unsigned char* data = {};
-            Util::HexToByte(cjsonData->valuestring, data);
-            custom->data = data;
+            char *data = cjsonData->valuestring;
+
+            int len = strlen(data);
+            len % 2 == 0 ? len = len / 2 : len = (len + 1) / 2;
+            custom->len = len;
+            unsigned char *udata = (unsigned char*)malloc(len);
+            ATE::hexToByte(data, udata, len);
+            custom->data = udata;
 
             if (strcmp(custom->cmd, "custom") == 0) {
                 custom->key = REQUEST_KEY::REQUEST_KEY_CUSTOM;
@@ -168,5 +175,18 @@ namespace ATE
         return cJSON_Print(doc);
     }
 
+    char* Command::printCustom(RESPONSE_BODY_CUSTOM* resCustom) {
+        cJSON *cjsonRoot = cJSON_CreateObject();
+        
+        cJSON_AddItemToObject(cjsonRoot, "id", cJSON_CreateNumber(resCustom->id));
+        if (resCustom->err != NULL)
+            cJSON_AddItemToObject(cjsonRoot, "err", cJSON_CreateString(resCustom->err));
 
+        string* data = ATE::byteToHex(resCustom->data, resCustom->len);
+        
+        cJSON_AddItemToObject(cjsonRoot, "data", cJSON_CreateString(data->c_str()));
+
+        return cJSON_Print(cjsonRoot);
+
+    }
 }

@@ -57,8 +57,16 @@ extern "C" void app_main()
         // }
 
         REQUEST_BODY_CUSTOM custom = REQUEST_BODY_CUSTOM();
-        if (cmd.parseCustom("{\"id\":123,\"cmd\":\"custom\",\"data\":\"1234567890ABCDEF\"}", &custom)) {
-            printf("success!");
+        if (cmd.parseCustom("{\"id\":123,\"cmd\":\"custom\",\"data\":\"1234567800ABCDEF\"}", &custom)) {
+            RESPONSE_BODY_CUSTOM resCustom = RESPONSE_BODY_CUSTOM();
+            resCustom.id = custom.id;
+            resCustom.err = custom.err;
+            resCustom.data = custom.data;
+            resCustom.len = custom.len;
+            
+            const char * res = cmd.printCustom(&resCustom);
+            printf(res);
+
         } else {
             printf("failed!");
         }
