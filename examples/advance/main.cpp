@@ -18,6 +18,7 @@ using namespace ATE;
 
 
 SerialServo srv = SerialServo(UART_NUM_0);
+SerialServo srv2 = SerialServo(UART_NUM_1);
 
 void restart() {
     printf("Restarting now.\n");
@@ -28,8 +29,6 @@ void restart() {
 
 void onRequest()
 {
-    //srv.response("Hello World");
-    // printf("Has a request, and callback success!\n");
     Command cmd;
     REQUEST_BODY_BASIC reqBasic = REQUEST_BODY_BASIC();
     // 解析json是否基本请求体
@@ -92,6 +91,7 @@ void onRequest()
                 resCustome.data = reqCustom.data;
                 resCustome.len = reqCustom.len;
                 srv.response(cmd.printCustom(&resCustome));
+                srv2.response(resCustome.data, resCustome.len);
             } else {
                 RESPONSE_BODY_BASIC resError;
                 resError.id = reqCustom.id;
@@ -109,6 +109,7 @@ void onRequest()
         srv.response(cmd.printBasic(&resError));
     }
 }
+
 
 extern "C" void app_main() {
 
@@ -145,6 +146,8 @@ extern "C" void app_main() {
 
     srv.begin(115200, 5, 18);
     srv.onRequest(onRequest);
+
+    srv2.begin(115200, 3, 1);
 
     while (1)
     {
