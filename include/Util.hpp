@@ -11,18 +11,9 @@ using namespace std;
 namespace ATE 
 {
 
-    class Util
-    {
-    private:
-        /* data */
-    public:
-        Util(/* args */);
-        ~Util();
-
-        static void HexToByte(const char* source, unsigned char* dest);
-    };
-    
-
+    unsigned char toByte(char c);
+    void hexToByte(const char *src, unsigned char *dst, int len);
+    string* byteToHex(unsigned char *src, int len);
 }
 
 #endif

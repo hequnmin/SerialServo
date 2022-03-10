@@ -43,15 +43,22 @@ namespace ATE
 
     void SerialServo::uartInit(int baud, int8_t rxPin, int8_t txPin) {	
         // Set HW Uart
+        // uart_config_t uart_config = {
+        //     .baud_rate = baud,							//波特率
+        //     .data_bits = UART_DATA_8_BITS,					//数据位
+        //     .parity = UART_PARITY_DISABLE,					//校验位
+        //     .stop_bits = UART_STOP_BITS_1,					//停止位
+        //     .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,			//流控位
+        //     .rx_flow_ctrl_thresh = 10, 					    //控制模式
+        // };
         uart_config_t uart_config = {
             .baud_rate = baud,							//波特率
             .data_bits = UART_DATA_8_BITS,					//数据位
             .parity = UART_PARITY_DISABLE,					//校验位
             .stop_bits = UART_STOP_BITS_1,					//停止位
             .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,			//流控位
-            .rx_flow_ctrl_thresh = 10, 					    //控制模式
+            .source_clk = UART_SCLK_APB,
         };
-        // .source_clk = UART_SCLK_APB,
 
         //ESP_ERROR_CHECK(uart_param_config(EX_UART_NUM, &uart_config));
         ESP_ERROR_CHECK(uart_param_config(uartNum, &uart_config));
@@ -70,9 +77,11 @@ namespace ATE
     void SerialServo::listen() {
         // 读入uart数据
         //int len = uart_read_bytes(EX_UART_NUM, buffer, BUFFER_SIZE, 20 / portTICK_RATE_MS);
-        int len = uart_read_bytes(uartNum, buffer, BUFFER_SIZE, 20 / portTICK_RATE_MS);
+
+        int len = uart_read_bytes(uartNum, buffer, BUFFER_SIZE - 1, 20 / portTICK_RATE_MS);
         if (len > 0) {
-            buffer[len] = 0;
+            buffer[len] = '\0';
+            uart_flush(uartNum);
             if (requestCallback != NULL) {
                 requestCallback();
             }
@@ -81,7 +90,6 @@ namespace ATE
 
     void SerialServo::response(const char *json) {
 
-        //uart_write_bytes(EX_UART_NUM, json, strlen(json));
         uart_write_bytes(uartNum, json, strlen(json));
 
         if (responseCallback != NULL) {

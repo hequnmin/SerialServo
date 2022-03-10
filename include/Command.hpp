@@ -2,11 +2,14 @@
 #define COMMAND_h
 
 #include <stdio.h>
+#include <iostream>
 #include <cstring>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "cJSON.h"
 #include "Util.hpp"
+
+using namespace std;
 
 namespace ATE
 {
@@ -44,7 +47,6 @@ namespace ATE
 
     // <获取系统信息>请求结构体
     struct REQUEST_BODY_INFO : public REQUEST_BODY_BASIC {
-
         REQUEST_BODY_INFO() {
             key = REQUEST_KEY::REQUEST_KEY_INFO;
         }
@@ -61,7 +63,6 @@ namespace ATE
 
     // <复位/清零>请求结构体
     struct REQUEST_BODY_RESET : public REQUEST_BODY_BASIC {
-
         REQUEST_BODY_RESET() {
             key = REQUEST_KEY::REQUEST_KEY_RESET;
         }
@@ -73,7 +74,8 @@ namespace ATE
 
     // <自定义>请求结构体
     struct REQUEST_BODY_CUSTOM : public REQUEST_BODY_BASIC {
-        unsigned char* data = NULL;
+        unsigned char* data = NULL;     // 字节数组地址
+        int len = 0;           // 字节数组长度
         REQUEST_BODY_CUSTOM() {
             key = REQUEST_KEY::REQUEST_KEY_CUSTOM;
         }
@@ -81,7 +83,8 @@ namespace ATE
 
     // <自定义>应答结构体
     struct RESPONSE_BODY_CUSTOM : public RESPONSE_BODY_BASIC {
-        unsigned char* data = NULL;
+        unsigned char* data = NULL;     // 字节数组地址
+        int len = 0;           // 字节数组长度
     };
 
 
@@ -116,11 +119,15 @@ namespace ATE
         // <获取系统信息>应答结构体序列化Json
         char* printReset(RESPONSE_BODY_RESET* resReset);
 
+        char* printCustom(RESPONSE_BODY_CUSTOM* resCustom);
+
+
         template<class T>
         bool parse(const char* json, T *req)
         {
             return true;
         }
+
 
     };
 

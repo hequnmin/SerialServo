@@ -17,7 +17,7 @@ using namespace std;
 using namespace ATE;
 
 
-SerialServo srv;
+SerialServo srv = SerialServo(UART_NUM_0);
 
 void restart() {
     printf("Restarting now.\n");
@@ -29,9 +29,9 @@ void restart() {
 void onRequest()
 {
     //srv.response("Hello World");
-    printf("Has a request, and callback success!\n");
+    // printf("Has a request, and callback success!\n");
     Command cmd;
-    REQUEST_BODY_BASIC reqBasic;
+    REQUEST_BODY_BASIC reqBasic = REQUEST_BODY_BASIC();
     // 解析json是否基本请求体
     if (cmd.parseBasic((const char*)srv.buffer, &reqBasic)) {
 
@@ -79,7 +79,25 @@ void onRequest()
                 resError.err = reqReset.err;
                 srv.response(cmd.printBasic(&resError)); 
             }
-
+        } else if (reqBasic.key == REQUEST_KEY::REQUEST_KEY_CUSTOM) {
+            REQUEST_BODY_CUSTOM reqCustom = REQUEST_BODY_CUSTOM();
+            if (cmd.parseCustom((const char*)srv.buffer, &reqCustom)) {
+                RESPONSE_BODY_CUSTOM resCustome = RESPONSE_BODY_CUSTOM();
+                resCustome.err = reqCustom.err;
+                resCustome.id = reqCustom.id;
+                
+                // unsigned char data[] = { 18, 52 };
+                // resCustome.data = data;
+                // resCustome.len = 1;
+                resCustome.data = reqCustom.data;
+                resCustome.len = reqCustom.len;
+                srv.response(cmd.printCustom(&resCustome));
+            } else {
+                RESPONSE_BODY_BASIC resError;
+                resError.id = reqCustom.id;
+                resError.err = reqCustom.err;
+                srv.response(cmd.printBasic(&resError)); 
+            }
         } else {
 
         }
@@ -94,28 +112,28 @@ void onRequest()
 
 extern "C" void app_main() {
 
-    esp_chip_info_t chip_info;
-    esp_chip_info(&chip_info);
-    printf("This is %s chip with %d CPU core(s), WiFi%s%s, ",
-            CONFIG_IDF_TARGET,
-            chip_info.cores,
-            (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
-            (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
+    // esp_chip_info_t chip_info;
+    // esp_chip_info(&chip_info);
+    // printf("This is %s chip with %d CPU core(s), WiFi%s%s, ",
+    //         CONFIG_IDF_TARGET,
+    //         chip_info.cores,
+    //         (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
+    //         (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
 
-    printf("silicon revision %d, ", chip_info.revision);
+    // printf("silicon revision %d, ", chip_info.revision);
 
-    printf("%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),
-            (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
+    // printf("%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),
+    //         (chip_info.features & CHIP_FEATURE_EMB_FLASH) ? "embedded" : "external");
 
-    printf("Minimum free heap size: %d bytes\n", esp_get_minimum_free_heap_size());
+    // printf("Minimum free heap size: %d bytes\n", esp_get_minimum_free_heap_size());
 
-    for (int i = 2; i >= 0; i--) {
-        printf("Restarting in %d seconds...\n", i);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
+    // for (int i = 2; i >= 0; i--) {
+    //     printf("Restarting in %d seconds...\n", i);
+    //     vTaskDelay(1000 / portTICK_PERIOD_MS);
+    // }
 
-    printf("Welcome to SerialServo!\n");
-    fflush(stdout);
+    // printf("Welcome to SerialServo!\n");
+    // fflush(stdout);
 
     // 初始化NVS
     esp_err_t ret = nvs_flash_init();
@@ -131,7 +149,8 @@ extern "C" void app_main() {
     while (1)
     {
         srv.listen();
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(20 / portTICK_PERIOD_MS);
+        
     }
     
 }

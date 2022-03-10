@@ -109,15 +109,15 @@ void loop() {
 
  **REQUEST_BODY_INFO <系统信息>请求结构体**
  - int id                               // 请求标识号
- - string cmd = "info"                  // 请求关键字
+ - char* cmd = "info"                  // 请求关键字
  - REQUEST_KEY key = REQUEST_KEY_INFO    
  - JSON: {"id":123, "cmd":"info"}
 
  **RESPONSE_BODY_INFO <系统信息>应答结构体**
  - int id                   // 请求标识号
- - string chi               // 芯片信息
- - string mac               // 物理地址
- - string ver               // 嵌入式版本
+ - char* chi               // 芯片信息
+ - char* mac               // 物理地址
+ - char* ver               // 嵌入式版本
  - int chn                  // 通道号
  - int cnn                  // 连接号
  - JSON: { "id":123, "chi":"esp32", "mac":"AA01", "ver": "1.2.3.4", "chn": 12, "cnn": 12  }
@@ -126,7 +126,7 @@ void loop() {
 
  **REQUEST_BODY_RESET <复位/清零>请求结构体**
  - int id                   // 请求标识号
- - string cmd = "reset"     // 请求关键字
+ - char* cmd = "reset"     // 请求关键字
  - REQUEST_KEY key = REQUEST_KEY_RESET
  - JSON: {"id":123, "cmd":"reset"}
 
@@ -134,5 +134,17 @@ void loop() {
  - int id                   // 请求标识号
  - JSON: { "id":123 }
 
-  
+ **3. CUSTOM 自定义** 
+
+ **REQUEST_BODY_CUSTOM <自定义>请求结构体**
+ - int id                   // 请求标识号
+ - char* cmd = "custom"     // 请求关键字
+ - unsigned char* data = NULL;     // 字节数组地址
+ - int len = 0;           // 字节数组长度
+ - REQUEST_KEY key = REQUEST_KEY_CUSTOM
+ - JSON: {"id":123, "cmd":"custom", "data":"1234567890ABCDEF"}
+
+ **RESPONSE_BODY_CUSTOM <自定义>应答结构体**
+ - int id                   // 请求标识号
+ - JSON: { "id":123, "data":"1234567890ABCDEF"}
 
