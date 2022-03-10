@@ -35,7 +35,8 @@ namespace ATE
         ~SerialServo();
 
         uint8_t *buffer;
-
+        int buffersize;
+        
         uart_port_t uartNum = UART_NUM_0;
 
         // 串口设置
@@ -51,6 +52,7 @@ namespace ATE
         void listen();
 
         void response(const char *json);
+        void response(unsigned char *data, int len);
 
     };
 

@@ -14,6 +14,7 @@ namespace ATE
         uartNum = uartnum;
         // 缓存分配内存
         buffer = (uint8_t *)malloc(BUFFER_SIZE);
+        buffersize = 0;
     }
 
     SerialServo::~SerialServo()
@@ -80,6 +81,7 @@ namespace ATE
 
         int len = uart_read_bytes(uartNum, buffer, BUFFER_SIZE - 1, 20 / portTICK_RATE_MS);
         if (len > 0) {
+            buffersize = len;
             buffer[len] = '\0';
             uart_flush(uartNum);
             if (requestCallback != NULL) {
@@ -95,8 +97,14 @@ namespace ATE
         if (responseCallback != NULL) {
             vTaskDelay(10 / portTICK_RATE_MS);
             responseCallback();
-            //responseCallback = NULL;
         }
     }
 
+    void SerialServo::response(unsigned char *data, int len) {
+        uart_write_bytes(uartNum, data, len);
+        if (responseCallback != NULL) {
+            vTaskDelay(10 / portTICK_RATE_MS);
+            responseCallback();
+        }
+    }
 }
