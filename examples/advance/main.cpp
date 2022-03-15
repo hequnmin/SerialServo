@@ -91,11 +91,41 @@ void onRequest()
                 resCustome.data = reqCustom.data;
                 resCustome.len = reqCustom.len;
                 srv.response(cmd.printCustom(&resCustome));
-                srv2.response(resCustome.data, resCustome.len);
+                //srv2.response(resCustome.data, resCustome.len);
             } else {
                 RESPONSE_BODY_BASIC resError;
                 resError.id = reqCustom.id;
                 resError.err = reqCustom.err;
+                srv.response(cmd.printBasic(&resError)); 
+            }
+        } else if (reqBasic.key == REQUEST_KEY_SETVOL) {
+            REQUEST_BODY_SETVOL reqSetvol = REQUEST_BODY_SETVOL();
+            if (cmd.parseSetvol((const char*)srv.buffer, &reqSetvol)) {
+                RESPONSE_BODY_SETVOL resSetvol = RESPONSE_BODY_SETVOL();
+                resSetvol.err = reqSetvol.err;
+                resSetvol.id = reqSetvol.id;
+                srv.response(cmd.printSetvol(&resSetvol));
+            } else {
+                RESPONSE_BODY_BASIC resError;
+                resError.id = reqSetvol.id;
+                resError.err = reqSetvol.err;
+                srv.response(cmd.printBasic(&resError)); 
+            }
+        } else if (reqBasic.key == REQUEST_KEY_GETVOL) {
+            REQUEST_BODY_GETVOL reqGetvol = REQUEST_BODY_GETVOL();
+            if (cmd.parseGetvol((const char*)srv.buffer, &reqGetvol)) {
+                RESPONSE_BODY_GETVOL resGetvol = RESPONSE_BODY_GETVOL();
+                resGetvol.err = reqGetvol.err;
+                resGetvol.id = reqGetvol.id;
+                resGetvol.vol.push_back(3799.998);
+                resGetvol.vol.push_back(3800.123);
+                resGetvol.vol.push_back(3800.889);
+
+                srv.response(cmd.printGetvol(&resGetvol));
+            } else {
+                RESPONSE_BODY_BASIC resError;
+                resError.id = reqGetvol.id;
+                resError.err = reqGetvol.err;
                 srv.response(cmd.printBasic(&resError)); 
             }
         } else {

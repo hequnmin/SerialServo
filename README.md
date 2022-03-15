@@ -148,3 +148,26 @@ void loop() {
  - int id                   // 请求标识号
  - JSON: { "id":123, "data":"1234567890ABCDEF"}
 
+**4. SETVOL 电压设置** 
+**REQUEST_BODY_SETVOL <电压设置>请求结构体**
+ - int id                   // 请求标识号
+ - char* cmd = "setvol"     // 请求关键字
+ - vector<double> vol;      // 电芯电压设置
+ - REQUEST_KEY key = REQUEST_KEY_SETVOL
+ - JSON: {"id":123, "cmd":"setvol", "vol":[3800,0,3800]}
+ **RESPONSE_BODY_SETVOL <电压设置>应答结构体**
+ - int id                   // 请求标识号
+ - JSON: { "id":123}
+
+**5. GETVOL 电压读数** 
+**REQUEST_BODY_GETVOL <电压读数>请求结构体**
+ - int id                   // 请求标识号
+ - char* cmd = "getvol"     // 请求关键字
+ - vector<bool> rel;        // 继电器开关
+ - REQUEST_KEY key = REQUEST_KEY_GETVOL
+ - JSON: {"id":123, "cmd":"getvol", "rel":[1,0,1]}
+ **RESPONSE_BODY_GETVOL <电压读数>应答结构体**
+ - int id                   // 请求标识号
+ - vector<double> vol;      // 电芯电压读数
+ - JSON: { "id":123, "vol":[3799.998, 3800.123, 3800.889]}
+

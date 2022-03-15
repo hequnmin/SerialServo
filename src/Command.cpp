@@ -46,6 +46,10 @@ namespace ATE
                 basic->key = REQUEST_KEY::REQUEST_KEY_RESET;
             } else if (strcmp(basic->cmd, "custom") == 0) {
                 basic->key = REQUEST_KEY::REQUEST_KEY_CUSTOM;
+            } else if (strcmp(basic->cmd, "setvol") == 0) {
+                basic->key = REQUEST_KEY::REQUEST_KEY_SETVOL;
+            } else if (strcmp(basic->cmd, "getvol") == 0) {
+                basic->key = REQUEST_KEY::REQUEST_KEY_GETVOL;
             } else {
                 basic->key = REQUEST_KEY::REQUEST_KEY_ERROR;
                 basic->err = "cmd invalid.";
@@ -140,6 +144,75 @@ namespace ATE
         return true;
     }
 
+    bool Command::parseSetvol(const char* json, REQUEST_BODY_SETVOL* setvol) {
+        cJSON *cjsonRoot, *cjsonId, *cjsonCmd, *cjsonVol;
+        cjsonRoot = cJSON_Parse(json);
+        if (cjsonRoot == NULL) {
+            return false;
+        } else {
+
+            cjsonId = cJSON_GetObjectItem(cjsonRoot, "id");
+            cjsonCmd = cJSON_GetObjectItem(cjsonRoot, "cmd");
+
+            setvol->id = cjsonId->valueint;
+            setvol->cmd = cjsonCmd->valuestring;
+
+            if (strcmp(setvol->cmd, "setvol") == 0) {
+                setvol->key = REQUEST_KEY::REQUEST_KEY_SETVOL;
+            } else {
+                setvol->key = REQUEST_KEY::REQUEST_KEY_ERROR;
+                setvol->err = (char*)"cmd error.";
+                return false;
+            }
+
+            cjsonVol = cJSON_GetObjectItem(cjsonRoot, "vol");
+            if (cjsonVol != NULL) {
+                int volSize = cJSON_GetArraySize(cjsonVol);
+                for(int i = 0; i < volSize; i++) {
+                    cJSON *citem = cJSON_GetArrayItem(cjsonVol, i);
+                    setvol->vol.push_back(citem->valuedouble);
+                }
+            }
+
+        }
+        return true;
+    }
+
+    bool Command::parseGetvol(const char* json, REQUEST_BODY_GETVOL* getvol) {
+        cJSON *cjsonRoot, *cjsonId, *cjsonCmd, *cjsonRel;
+        cjsonRoot = cJSON_Parse(json);
+        if (cjsonRoot == NULL) {
+            return false;
+        } else {
+
+            cjsonId = cJSON_GetObjectItem(cjsonRoot, "id");
+            cjsonCmd = cJSON_GetObjectItem(cjsonRoot, "cmd");
+
+            getvol->id = cjsonId->valueint;
+            getvol->cmd = cjsonCmd->valuestring;
+
+            if (strcmp(getvol->cmd, "getvol") == 0) {
+                getvol->key = REQUEST_KEY::REQUEST_KEY_SETVOL;
+            } else {
+                getvol->key = REQUEST_KEY::REQUEST_KEY_ERROR;
+                getvol->err = (char*)"cmd error.";
+                return false;
+            }
+
+            cjsonRel = cJSON_GetObjectItem(cjsonRoot, "rel");
+            if (cjsonRel != NULL) {
+                bool relSize = cJSON_GetArraySize(cjsonRel);
+                for(int i = 0; i < relSize; i++) {
+                    cJSON *citem = cJSON_GetArrayItem(cjsonRel, i);
+
+                    getvol->rel.push_back((citem->valueint > 0));
+                }
+            }
+
+        }
+        return true;
+    }
+
     char* Command::printBasic(RESPONSE_BODY_BASIC* resBasic) {
         cJSON *doc = cJSON_CreateObject();
         
@@ -189,4 +262,36 @@ namespace ATE
         return cJSON_Print(cjsonRoot);
 
     }
+
+    char* Command::printSetvol(RESPONSE_BODY_SETVOL* resSetvol) {
+        cJSON *cjsonRoot = cJSON_CreateObject();
+        
+        cJSON_AddItemToObject(cjsonRoot, "id", cJSON_CreateNumber(resSetvol->id));
+        if (resSetvol->err != NULL)
+            cJSON_AddItemToObject(cjsonRoot, "err", cJSON_CreateString(resSetvol->err));
+
+
+        return cJSON_Print(cjsonRoot);
+
+    }
+
+    char* Command::printGetvol(RESPONSE_BODY_GETVOL* resGetvol) {
+        cJSON *cjsonRoot = cJSON_CreateObject();
+        
+        cJSON_AddItemToObject(cjsonRoot, "id", cJSON_CreateNumber(resGetvol->id));
+        if (resGetvol->err != NULL)
+            cJSON_AddItemToObject(cjsonRoot, "err", cJSON_CreateString(resGetvol->err));
+
+        cJSON_AddItemToObject(cjsonRoot, "err", cJSON_CreateString(resGetvol->err));
+
+        // 电压读数数组序列化
+        int volSize = resGetvol->vol.size();
+        double vol[volSize];
+        copy(resGetvol->vol.begin(), resGetvol->vol.end(), vol);
+        cJSON_AddItemToObject(cjsonRoot,"vol", cJSON_CreateDoubleArray(vol,volSize));
+
+        return cJSON_Print(cjsonRoot);
+
+    }
+
 }

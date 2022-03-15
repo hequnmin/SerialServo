@@ -2,6 +2,7 @@
 #define COMMAND_h
 
 #include <stdio.h>
+#include <vector>
 #include <iostream>
 #include <cstring>
 #include "freertos/FreeRTOS.h"
@@ -26,7 +27,9 @@ namespace ATE
         REQUEST_KEY_BASIC,          // 基本请求
         REQUEST_KEY_INFO,           // <获取系统信息>请求
         REQUEST_KEY_RESET,          // <复位/清零>请求
-        REQUEST_KEY_CUSTOM          // <自定义>请求
+        REQUEST_KEY_CUSTOM,         // <自定义>请求
+        REQUEST_KEY_SETVOL,         // 电压设置
+        REQUEST_KEY_GETVOL,         // 电压读数
     };
 
     // 基本请求结构体
@@ -87,6 +90,30 @@ namespace ATE
         int len = 0;           // 字节数组长度
     };
 
+    // <电压设置>请求结构体
+    struct REQUEST_BODY_SETVOL : public REQUEST_BODY_BASIC {
+        vector<double> vol;             // 电芯电压设置
+        REQUEST_BODY_SETVOL() {
+            key = REQUEST_KEY::REQUEST_KEY_SETVOL;
+        }
+    };
+
+    // <电压设置>应答结构体
+    struct RESPONSE_BODY_SETVOL : public RESPONSE_BODY_BASIC {
+    };
+
+    // <电压读数>请求结构体
+    struct REQUEST_BODY_GETVOL : public REQUEST_BODY_BASIC {
+        vector<bool> rel;               // 继电器开关
+        REQUEST_BODY_GETVOL() {
+            key = REQUEST_KEY::REQUEST_KEY_GETVOL;
+        }
+    };
+
+    // <电压读数>应答结构体
+    struct RESPONSE_BODY_GETVOL : public RESPONSE_BODY_BASIC {
+        vector<double> vol;             // 电芯电压读数
+    };
 
     // 指令类
     class Command
@@ -109,6 +136,11 @@ namespace ATE
         // <自定义>请求Json解析结构体
         bool parseCustom(const char* json, REQUEST_BODY_CUSTOM* custom);
 
+        // <电压设置>请求Json解析结构体
+        bool parseSetvol(const char* json, REQUEST_BODY_SETVOL* setvol);
+
+        // <电压读数>请求Json解析结构体
+        bool parseGetvol(const char* json, REQUEST_BODY_GETVOL* getvol);
 
         // 基本应答体序列化Json
         char* printBasic(RESPONSE_BODY_BASIC* resBasic);
@@ -116,11 +148,17 @@ namespace ATE
         // <获取系统信息>应答结构体序列化Json
         char* printInfo(RESPONSE_BODY_INFO* resInfo);
 
-        // <获取系统信息>应答结构体序列化Json
+        // <复位/清零>应答结构体序列化Json
         char* printReset(RESPONSE_BODY_RESET* resReset);
 
+        // <自定义>应答结构体序列化Json
         char* printCustom(RESPONSE_BODY_CUSTOM* resCustom);
 
+        // <电压设置>应答结构体序列化Json
+        char* printSetvol(RESPONSE_BODY_SETVOL* resSetvol);
+
+        // <电压读数>应答结构体序列化Json
+        char* printGetvol(RESPONSE_BODY_GETVOL* resGetvol);
 
         template<class T>
         bool parse(const char* json, T *req)
