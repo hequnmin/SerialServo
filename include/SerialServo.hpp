@@ -52,7 +52,7 @@ namespace ATE
         void listen();
 
         void response(const char *json);
-        void response(unsigned char *data, int len);
+        void response(const char *data, size_t len);
 
     };
 

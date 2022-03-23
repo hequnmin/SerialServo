@@ -8,7 +8,29 @@ using namespace ATE;
 SerialServo srv;
 
 void onRequest() {
-    srv.response("Hello SerialServo! ");
+    
+    // // 回复字符串
+    // srv.response("Hello SerialServo! ");
+    
+    // // 回复字节数组
+    // unsigned char data[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+    // int len = 10;
+    // srv.response(data, len);
+
+    // // 回复字节数组
+    // char data[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    // int len = 10;
+    // srv.response((unsigned char*)data, len);
+
+    // 回复字节数组
+    int len = 255;
+    char *data = new char[len];
+    for (int i = 0; i < len; i++)
+    {
+        data[i] = i + 1;
+    }
+    srv.response((const char*)data, len);
+
 }
 
 extern "C" void app_main() {

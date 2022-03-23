@@ -91,7 +91,7 @@ void onRequest()
                 resCustome.data = reqCustom.data;
                 resCustome.len = reqCustom.len;
                 srv.response(cmd.printCustom(&resCustome));
-                //srv2.response(resCustome.data, resCustome.len);
+                // srv.response(resCustome.data, resCustome.len);
             } else {
                 RESPONSE_BODY_BASIC resError;
                 resError.id = reqCustom.id;

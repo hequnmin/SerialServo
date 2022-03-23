@@ -100,7 +100,7 @@ namespace ATE
         }
     }
 
-    void SerialServo::response(unsigned char *data, int len) {
+    void SerialServo::response(const char *data, size_t len) {
         uart_write_bytes(uartNum, data, len);
         if (responseCallback != NULL) {
             vTaskDelay(10 / portTICK_RATE_MS);
