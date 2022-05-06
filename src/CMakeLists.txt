@@ -17,7 +17,10 @@
 # FILE(GLOB_RECURSE app_sources   ${CMAKE_SOURCE_DIR}/src/*.*
 #                                 ${CMAKE_SOURCE_DIR}/examples/multiuart/*.*)
 
+# FILE(GLOB_RECURSE app_sources   ${CMAKE_SOURCE_DIR}/src/*.*
+#                                 ${CMAKE_SOURCE_DIR}/examples/tasks/*.*)
+
 FILE(GLOB_RECURSE app_sources   ${CMAKE_SOURCE_DIR}/src/*.*
-                                ${CMAKE_SOURCE_DIR}/examples/tasks/*.*)
+                                ${CMAKE_SOURCE_DIR}/examples/ATE2022/*.*)
 
 idf_component_register(SRCS ${app_sources})
